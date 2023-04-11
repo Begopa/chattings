@@ -36,6 +36,7 @@ export class ChatsGateway
     @MessageBody() username: string,
     @ConnectedSocket() socket: Socket,
   ) {
+    socket.broadcast.emit('user_connected', username);
     return username;
   }
 }
