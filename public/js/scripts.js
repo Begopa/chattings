@@ -14,6 +14,16 @@ socket.on('user_connected', (username) => {
 //* draw functions
 const drawHelloStranger = (username) =>
   (helloStrangerElement.innerText = `Hello ${username} Stranger :)`);
+const drawNewChat = (message) => {
+  const wrapperChatBox = document.createElement('div');
+  const chatBox = `
+      <div>
+        ${message}
+      </div>
+      `;
+  wrapperChatBox.innerHTML = chatBox;
+  chattingBoxElement.append(wrapperChatBox);
+};
 
 function helloUser() {
   const username = prompt('What is your name?');
