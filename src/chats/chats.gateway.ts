@@ -62,10 +62,17 @@ export class ChatsGateway
   }
 
   @SubscribeMessage('submit_chat')
-  handleSubmitChat(
+  async handleSubmitChat(
     @MessageBody() chat: string,
     @ConnectedSocket() socket: Socket,
   ) {
+    const socketObj = await this.socketModel.findOne({ id: socket.id });
+
+    await this.chattingModel.create({
+      user: socketObj,
+      chat: chat,
+    });
+
     socket.broadcast.emit('new_chat', {
       chat,
       username: socket.id,
