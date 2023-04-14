@@ -27,12 +27,17 @@ export class ChatsGateway
   ) {
     this.logger.log('constructor');
   }
-  handleDisconnect(@ConnectedSocket() socket: Socket) {
-    this.logger.log(`connect: ${socket.id} ${socket.nsp.name}`);
+  async handleDisconnect(@ConnectedSocket() socket: Socket) {
+    const user = await this.socketModel.findOne({ id: socket.id });
+    if (user) {
+      socket.broadcast.emit('disconnect_user', user.username);
+      await user.deleteOne();
+    }
+    this.logger.log(`disconnected: ${socket.id} ${socket.nsp.name}`);
   }
 
   handleConnection(@ConnectedSocket() socket: Socket) {
-    this.logger.log(`connect: ${socket.id} ${socket.nsp.name}`);
+    this.logger.log(`connected: ${socket.id} ${socket.nsp.name}`);
   }
 
   afterInit() {
@@ -75,7 +80,7 @@ export class ChatsGateway
 
     socket.broadcast.emit('new_chat', {
       chat,
-      username: socket.id,
+      username: socketObj.username,
     });
   }
 }
